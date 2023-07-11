@@ -61,7 +61,12 @@ def init_game():
     grid = [[None] * GRID_WIDTH for i in range(GRID_HEIGHT)]
     tetrimino = Tetrimino()
     game_over = False
-    return grid, tetrimino, game_over
+
+def init_game():
+    grid = [[None] * GRID_WIDTH for i in range(GRID_HEIGHT)]
+    tetrimino = Tetrimino()
+    game_over = False
+    return grid, tetrimino, game_over    
 
 # ゲームのメインループ
 def run_game():
@@ -81,6 +86,10 @@ def run_game():
                     tetrimino.move(1, 0)
                     if tetrimino.collides(grid):
                         tetrimino.move(-1, 0)
+                elif event.key == pygame.K_SPACE:
+                    tetrimino.rotate()
+                    if tetrimino.collides(grid):
+                        tetrimino.rotate()
         tetrimino.move(0, 1)
         if tetrimino.collides(grid):
             tetrimino.move(0, -1)

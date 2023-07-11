@@ -38,9 +38,9 @@ class Tetrimino:
         for y, row in enumerate(self.shape):
             for x, col in enumerate(row):
                 if col:
-                    pygame.draw.rect(screen, self.color, (self.x * GRID_SIZE + x * GRID_SIZE,
-                                                          self.y * GRID_SIZE + y * GRID_SIZE,
-                                                          GRID_SIZE, GRID_SIZE))
+                    rect = pygame.Rect((self.x + x) * GRID_SIZE,(self.y + y) * GRID_SIZE,GRID_SIZE,GRID_SIZE)
+                    pygame.draw.rect(screen, self.color, rect)
+                    pygame.draw.rect(screen, (0, 0, 0), rect, 1)#ブロックが落下する前にブロックの中の四角一つに外枠を描画
 
     def collides(self, grid):
         for y, row in enumerate(self.shape):
@@ -55,6 +55,13 @@ class Tetrimino:
             for x, col in enumerate(row):
                 if col:
                     grid[self.y + y][self.x + x] = self.color
+
+    def drop_to_bottom(self, grid):
+        while not self.collides(grid):#他のブロックに衝突しなければループ
+            self.move(0, 1)
+        self.move(0, -1)
+        self.place(grid)
+        return Tetrimino()
 
 # ゲームの初期化
 def init_game():
@@ -72,15 +79,21 @@ def run_game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     tetrimino.move(-1, 0)
                     if tetrimino.collides(grid):
                         tetrimino.move(1, 0)
+
                 elif event.key == pygame.K_RIGHT:
                     tetrimino.move(1, 0)
                     if tetrimino.collides(grid):
                         tetrimino.move(-1, 0)
+
+                elif event.key == pygame.K_DOWN:#DOWNキーが押されれば
+                    tetrimino.drop_to_bottom(grid)
+
         tetrimino.move(0, 1)
         if tetrimino.collides(grid):
             tetrimino.move(0, -1)
@@ -93,7 +106,14 @@ def run_game():
         for y, row in enumerate(grid):
             for x, col in enumerate(row):
                 if col:
-                    pygame.draw.rect(screen, col, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+                    rect = pygame.Rect(
+                        x * GRID_SIZE,
+                        y * GRID_SIZE,
+                        GRID_SIZE,
+                        GRID_SIZE
+                    )
+                    pygame.draw.rect(screen, col, rect)
+                    pygame.draw.rect(screen, (0, 0, 0), rect, 1) #ブロック落下後にブロックの中の四角一つに外枠を描画
 
         tetrimino.draw()
         pygame.display.flip()

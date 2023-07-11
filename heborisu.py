@@ -63,6 +63,17 @@ def init_game():
     game_over = False
     return grid, tetrimino, game_over
 
+# 行が揃っているかをチェックし、揃っている行を削除する
+def check_lines(grid):
+    full_rows = []
+    for y, row in enumerate(grid):
+        if all(row):
+            full_rows.append(y)
+
+    for row_index in full_rows:
+        del grid[row_index]
+        grid.insert(0, [None] * GRID_WIDTH)
+
 # ゲームのメインループ
 def run_game():
     grid, tetrimino, game_over = init_game()
@@ -72,6 +83,7 @@ def run_game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     tetrimino.move(-1, 0)
@@ -81,10 +93,12 @@ def run_game():
                     tetrimino.move(1, 0)
                     if tetrimino.collides(grid):
                         tetrimino.move(-1, 0)
+                
         tetrimino.move(0, 1)
         if tetrimino.collides(grid):
             tetrimino.move(0, -1)
             tetrimino.place(grid)
+            check_lines(grid)
             tetrimino = Tetrimino()
             if tetrimino.collides(grid):
                 game_over = True
@@ -97,7 +111,7 @@ def run_game():
 
         tetrimino.draw()
         pygame.display.flip()
-        clock.tick(3)
+        clock.tick(5)
 
 # ゲームの実行
 run_game()

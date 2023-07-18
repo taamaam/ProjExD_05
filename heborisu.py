@@ -8,6 +8,7 @@ GRID_WIDTH, GRID_HEIGHT = WIDTH // GRID_SIZE, HEIGHT // GRID_SIZE
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
+
 # テトリスのブロックの定義
 tetriminos = [
     [[1, 1, 1, 1]],
